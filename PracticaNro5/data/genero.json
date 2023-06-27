@@ -1,0 +1,40 @@
+{
+    "controlador.ed.lista.ListaEnlazada": {
+        "cabecera": {
+            "info": {
+                "@class": "modelo.Genero",
+                "id": 1,
+                "nombre": "Accion"
+            },
+            "sig": {
+                "info": {
+                    "@class": "modelo.Genero",
+                    "id": 2,
+                    "nombre": "Ficcion"
+                },
+                "sig": {
+                    "info": {
+                        "@class": "modelo.Genero",
+                        "id": 3,
+                        "nombre": "Terror"
+                    },
+                    "sig": {
+                        "info": {
+                            "@class": "modelo.Genero",
+                            "id": 4,
+                            "nombre": "Aventura"
+                        },
+                        "sig": {
+                            "info": {
+                                "@class": "modelo.Genero",
+                                "id": 5,
+                                "nombre": "Comedia"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "size": 5
+    }
+}
