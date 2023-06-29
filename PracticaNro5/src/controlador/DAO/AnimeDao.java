@@ -115,7 +115,7 @@ public class AnimeDao extends AdaptadorDAO<Anime> {
     }
 
     //BUsqueda LIneal
-    public ListaEnlazada<Anime> busquedaLineal(String dato) throws Exception {
+    public ListaEnlazada<Anime> busquedaLineal(String dato, String tipo) throws Exception {
         Genero g = new GeneroDAO().buscarPorNombres(dato);
 
         ListaEnlazada<Anime> resultado = new ListaEnlazada<>();
@@ -123,22 +123,31 @@ public class AnimeDao extends AdaptadorDAO<Anime> {
         for (int i = 0; i < lista.size(); i++) {
             Anime aux = lista.get(i);
 
-            if (aux.getNombre().toLowerCase().startsWith(dato.toLowerCase())) {
-                resultado.insertar(aux);
-            }
-            if (aux.getEstado().toLowerCase().startsWith(dato.toLowerCase())) {
-                resultado.insertar(aux);
-            }
-            if(g != null){
-                if (aux.getGeneroA().intValue() == g.getId().intValue()) {
+            if (tipo == "Nombre") {
+                if (aux.getNombre().toLowerCase().startsWith(dato.toLowerCase())) {
                     resultado.insertar(aux);
                 }
             }
-            
+            if (tipo == "Temporada") {
+                if (aux.getNumTemp().toLowerCase().startsWith(dato.toLowerCase())) {
+                    resultado.insertar(aux);
+                }
+            }
+            if (tipo == "Estado") {
+                if (aux.getEstado().toLowerCase().startsWith(dato.toLowerCase())) {
+                    resultado.insertar(aux);
+                }
+            }
+            if (tipo == "Genero") {
+                if (g != null) {
+                    if (aux.getGeneroA().intValue() == g.getId().intValue()) {
+                        resultado.insertar(aux);
+                    }
+                }
+            }
         }
         return resultado;
     }
-
 
     //Busqueda Binaria
 //    public Anime busquedaBinaria(String dato) throws Exception {
@@ -168,10 +177,10 @@ public class AnimeDao extends AdaptadorDAO<Anime> {
 //        System.out.println("salio");
 //        return null; // No se encontró ningún elemento que cumpla el criterio
 //    }
-    public Anime buscarPorNombreBinaria(String dato) throws VacioException, PosicionException {
+    public Anime buscarPorNombreBinaria(String dato, String tipo) throws VacioException, PosicionException {
         Genero g = new GeneroDAO().buscarPorNombre(dato);
         ListaEnlazada<Anime> lista = listar();
-        ListaEnlazada<Anime> listaO=  ordenarNombre(lista);
+        ListaEnlazada<Anime> listaO = ordenarNombre(lista);
         Anime[] matriz = listaO.toArray();
         int inicio = 0;
         int fin = listaO.size() - 1;
@@ -179,39 +188,55 @@ public class AnimeDao extends AdaptadorDAO<Anime> {
         while (inicio <= fin) {
             int medio = inicio + (fin - inicio) / 2;
 
-            Anime aux = matriz[medio];            
+            Anime aux = matriz[medio];
 
-            if (aux.getNombre().compareToIgnoreCase(dato) == 0) {
-                return aux;// Se encontró el anime con el nombre buscado
-            } else {
-                if (aux.getNombre().compareToIgnoreCase(dato) < 0) {
-                    inicio = medio + 1; // El anime buscado está en la mitad derecha
-                } else {
-                    fin = medio - 1; // El anime buscado está en la mitad izquierda
-                }
-            }
-            
-            if (aux.getEstado().compareToIgnoreCase(dato) == 0) {
-                return aux;// Se encontró el anime con el nombre buscado
-            } else {
-                if (aux.getEstado().compareToIgnoreCase(dato) < 0) {
-                    inicio = medio + 1; // El anime buscado está en la mitad derecha
-                } else {
-                    fin = medio - 1; // El anime buscado está en la mitad izquierda
-                }
-            }
-            
-            if(g != null){
-                if (aux.getGeneroA().intValue() == g.getId().intValue()) {
+            if (tipo == "Nombre") {
+                if (aux.getNombre().compareToIgnoreCase(dato) == 0) {
                     return aux;// Se encontró el anime con el nombre buscado
                 } else {
-                    if (aux.getGeneroA().intValue() < g.getId().intValue()) {
+                    if (aux.getNombre().compareToIgnoreCase(dato) < 0) {
                         inicio = medio + 1; // El anime buscado está en la mitad derecha
                     } else {
                         fin = medio - 1; // El anime buscado está en la mitad izquierda
                     }
                 }
             }
+            if (tipo == "Temporada") {
+                if (aux.getNumTemp().compareToIgnoreCase(dato) == 0) {
+                    return aux;// Se encontró el anime con el nombre buscado
+                } else {
+                    if (aux.getNumTemp().compareToIgnoreCase(dato.toLowerCase()) < 0) {
+                        inicio = medio + 1; // El anime buscado está en la mitad derecha
+                    } else {
+                        fin = medio - 1; // El anime buscado está en la mitad izquierda
+                    }
+                }
+            }
+            if (tipo == "Estado") {
+                if (aux.getEstado().compareToIgnoreCase(dato) == 0) {
+                    return aux;// Se encontró el anime con el nombre buscado
+                } else {
+                    if (aux.getEstado().compareToIgnoreCase(dato) < 0) {
+                        inicio = medio + 1; // El anime buscado está en la mitad derecha
+                    } else {
+                        fin = medio - 1; // El anime buscado está en la mitad izquierda
+                    }
+                }
+            }
+            if (tipo == "Genero") {
+                if (g != null) {
+                    if (aux.getGeneroA().intValue() == g.getId().intValue()) {
+                        return aux;// Se encontró el anime con el nombre buscado
+                    } else {
+                        if (aux.getGeneroA().intValue() < g.getId().intValue()) {
+                            inicio = medio + 1; // El anime buscado está en la mitad derecha
+                        } else {
+                            fin = medio - 1; // El anime buscado está en la mitad izquierda
+                        }
+                    }
+                }
+            }
+
         }
 
         return null; // No se encontró el anime con el nombre buscado

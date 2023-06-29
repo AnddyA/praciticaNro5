@@ -32,7 +32,7 @@ public class ModeloTabla extends AbstractTableModel{
 
     @Override
     public int getColumnCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -47,7 +47,8 @@ public class ModeloTabla extends AbstractTableModel{
             case 0: return (a != null) ? a.getId() : "No definido";
             case 1: return (a != null) ? a.getNombre() : "No definido";
             case 2: return (a != null) ? new GeneroDAO().obtener(a.getGeneroA()) : "No definido";
-            case 3: return (a != null) ? a.getEstado() : "NO definido";
+            case 3: return (a != null) ? a.getNumTemp() : "NO definido";
+            case 4: return (a != null) ? a.getEstado() : "NO definido";
             
             default:
                 return null;
@@ -59,7 +60,8 @@ public class ModeloTabla extends AbstractTableModel{
             case 0: return "Id";
             case 1: return "Nombre";
             case 2: return "Genero";
-            case 3: return "Estado";
+            case 3: return "Temporada";
+            case 4: return "Estado";
             
             default:
                 return null;

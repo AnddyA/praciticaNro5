@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/andy/NetBeansProjects/PracticaNro5/src/controlador/DAO/GeneroDAO.java</file>
-            <file>file:/home/andy/NetBeansProjects/PracticaNro5/src/modelo/vista/Jframe.java</file>
-            <file>file:/home/andy/NetBeansProjects/PracticaNro5/src/controlador/DAO/AnimeDao.java</file>
-            <file>file:/home/andy/NetBeansProjects/PracticaNro5/data/anime.json</file>
+            <file>file:/home/andy/NetBeansProjects/praciticaNro5-main/PracticaNro5/src/modelo/Anime.java</file>
+            <file>file:/home/andy/NetBeansProjects/praciticaNro5-main/PracticaNro5/src/modelo/tabla/ModeloTabla.java</file>
+            <file>file:/home/andy/NetBeansProjects/praciticaNro5-main/PracticaNro5/src/modelo/vista/Jframe.java</file>
+            <file>file:/home/andy/NetBeansProjects/praciticaNro5-main/PracticaNro5/src/controlador/DAO/AnimeDao.java</file>
         </group>
     </open-files>
 </project-private>

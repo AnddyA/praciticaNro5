@@ -29,6 +29,9 @@ public class Jframe extends java.awt.Dialog {
     public Jframe(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+//        jPanel2.setOpaque(false);
+//        jPanel3.setOpaque(false);
+//        jPanel4.setOpaque(false);
         setLocationRelativeTo(null);
         cargarTabla();
         cargarCombo();
@@ -36,6 +39,7 @@ public class Jframe extends java.awt.Dialog {
 
     public void limpiar() {
         txtNombre.setText("");
+        txtTemp.setText("");
         txtEstado.setText("");
         cargarTabla();
         cargarCombo();
@@ -59,13 +63,15 @@ public class Jframe extends java.awt.Dialog {
     }
 
     public void guardar() {
-        if (txtNombre.getText().trim().isEmpty() || txtEstado.getText().trim().isEmpty()) {
+        if (txtNombre.getText().trim().isEmpty() || txtTemp.getText().trim().isEmpty() || txtEstado.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Llene los datos", "ERROR", JOptionPane.ERROR_MESSAGE);
 
         } else {
             try {
                 ad.getAnime().setNombre(txtNombre.getText());
+                ad.getAnime().setNumTemp(txtTemp.getText());
                 ad.getAnime().setEstado(txtEstado.getText());
+
                 ad.getAnime().setGeneroA(gd.buscarPorNombre(comboGenero1.getSelectedItem().toString()).getId());
                 if (ad.getAnime().getId() != null) {
                     ad.modificar(fila);
@@ -88,6 +94,7 @@ public class Jframe extends java.awt.Dialog {
                 Integer id = modelo.getLista().get(fila).getId();
                 ad.setAnime(ad.obtener(id));
                 txtNombre.setText(ad.getAnime().getNombre());
+                txtTemp.setText(ad.getAnime().getNumTemp());
                 txtEstado.setText(ad.getAnime().getEstado());
                 comboGenero1.setSelectedItem(gd.obtener(ad.getAnime().getGeneroA()).getNombre().toUpperCase());
             } catch (Exception e) {
@@ -103,13 +110,16 @@ public class Jframe extends java.awt.Dialog {
         String texto = txtBuscar.getText();
         try {
             if (por.equalsIgnoreCase("Nombre")) {
-                modelo.setLista(ad.busquedaLineal(texto));
+                modelo.setLista(ad.busquedaLineal(texto, "Nombre"));
             }
             if (por.equalsIgnoreCase("Genero")) {
-                modelo.setLista(ad.busquedaLineal(texto));
+                modelo.setLista(ad.busquedaLineal(texto, "Genero"));
+            }
+            if (por.equalsIgnoreCase("Temporada")) {
+                modelo.setLista(ad.busquedaLineal(texto, "Temporada"));
             }
             if (por.equalsIgnoreCase("Estado")) {
-                modelo.setLista(ad.busquedaLineal(texto));
+                modelo.setLista(ad.busquedaLineal(texto, "Estado"));
             }
             tblTabla.setModel(modelo);
             tblTabla.updateUI();
@@ -125,7 +135,7 @@ public class Jframe extends java.awt.Dialog {
         String texto = txtBuscar.getText();
         try {
             if (por.equalsIgnoreCase("Nombre")) {
-                Anime anime = ad.buscarPorNombreBinaria(texto);
+                Anime anime = ad.buscarPorNombreBinaria(texto, "Nombre");
                 if (anime != null) {
                     ListaEnlazada<Anime> listaAnime = new ListaEnlazada<>();
                     listaAnime.insertar(anime);
@@ -135,7 +145,17 @@ public class Jframe extends java.awt.Dialog {
                 }
             }
             if (por.equalsIgnoreCase("Genero")) {
-                Anime anime = ad.buscarPorNombreBinaria(texto);
+                Anime anime = ad.buscarPorNombreBinaria(texto, "Genero");
+                if (anime != null) {
+                    ListaEnlazada<Anime> listaAnime = new ListaEnlazada<>();
+                    listaAnime.insertar(anime);
+                    modelo.setLista(listaAnime);
+                } else {
+                    modelo.setLista(new ListaEnlazada<>()); // Si no se encontró el anime, se asigna una lista vacía al modelo
+                }
+            }
+            if (por.equalsIgnoreCase("Temporada")) {
+                Anime anime = ad.buscarPorNombreBinaria(texto, "Temporada");
                 if (anime != null) {
                     ListaEnlazada<Anime> listaAnime = new ListaEnlazada<>();
                     listaAnime.insertar(anime);
@@ -145,7 +165,7 @@ public class Jframe extends java.awt.Dialog {
                 }
             }
             if (por.equalsIgnoreCase("Estado")) {
-                Anime anime = ad.buscarPorNombreBinaria(texto);
+                Anime anime = ad.buscarPorNombreBinaria(texto, "Estado");
                 if (anime != null) {
                     ListaEnlazada<Anime> listaAnime = new ListaEnlazada<>();
                     listaAnime.insertar(anime);
@@ -184,12 +204,15 @@ public class Jframe extends java.awt.Dialog {
         txtEstado = new javax.swing.JTextField();
         comboGenero1 = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        txtTemp = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         comboBuscar = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
         txtBuscar = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -198,9 +221,11 @@ public class Jframe extends java.awt.Dialog {
         });
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setLayout(null);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Liberation Sans", 0, 15), new java.awt.Color(102, 102, 102))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Tabla", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Liberation Sans", 1, 15), new java.awt.Color(102, 102, 102))); // NOI18N
+        jPanel2.setOpaque(false);
 
         tblTabla.setBackground(new java.awt.Color(255, 255, 255));
         tblTabla.setForeground(new java.awt.Color(102, 102, 102));
@@ -233,7 +258,7 @@ public class Jframe extends java.awt.Dialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jButton3)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -249,13 +274,20 @@ public class Jframe extends java.awt.Dialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Liberation Sans", 0, 15), new java.awt.Color(102, 102, 102))); // NOI18N
+        jPanel1.add(jPanel2);
+        jPanel2.setBounds(10, 250, 600, 292);
 
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Anime", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Liberation Sans", 1, 15), new java.awt.Color(102, 102, 102))); // NOI18N
+        jPanel3.setOpaque(false);
+
+        jLabel1.setForeground(new java.awt.Color(102, 102, 102));
         jLabel1.setText("Nombre:");
 
+        jLabel2.setForeground(new java.awt.Color(102, 102, 102));
         jLabel2.setText("Estado:");
 
+        jLabel3.setForeground(new java.awt.Color(102, 102, 102));
         jLabel3.setText("Genero:");
 
         txtNombre.setBackground(new java.awt.Color(255, 255, 255));
@@ -277,28 +309,41 @@ public class Jframe extends java.awt.Dialog {
             }
         });
 
+        jLabel5.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel5.setText("Temporadas:");
+
+        txtTemp.setBackground(new java.awt.Color(255, 255, 255));
+        txtTemp.setForeground(new java.awt.Color(102, 102, 102));
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(comboGenero1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(comboGenero1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(9, 9, 9))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -309,20 +354,27 @@ public class Jframe extends java.awt.Dialog {
                     .addComponent(jLabel2)
                     .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(comboGenero1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addGap(17, 17, 17))
+                    .addComponent(jLabel5)
+                    .addComponent(txtTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addContainerGap())
         );
+
+        jPanel1.add(jPanel3);
+        jPanel3.setBounds(10, 10, 600, 131);
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Busqueda", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Liberation Sans", 1, 15), new java.awt.Color(102, 102, 102))); // NOI18N
+        jPanel4.setOpaque(false);
 
         comboBuscar.setBackground(new java.awt.Color(255, 255, 255));
         comboBuscar.setForeground(new java.awt.Color(102, 102, 102));
-        comboBuscar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nombre", "Genero", "Estado" }));
+        comboBuscar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nombre", "Temporada", "Genero", "Estado" }));
 
         jButton2.setBackground(new java.awt.Color(255, 255, 255));
         jButton2.setForeground(new java.awt.Color(102, 102, 102));
@@ -333,6 +385,7 @@ public class Jframe extends java.awt.Dialog {
             }
         });
 
+        jLabel4.setForeground(new java.awt.Color(102, 102, 102));
         jLabel4.setText("Buscar por:");
 
         jButton4.setBackground(new java.awt.Color(255, 255, 255));
@@ -356,14 +409,14 @@ public class Jframe extends java.awt.Dialog {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(comboBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(108, 108, 108)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(50, 50, 50)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(txtBuscar))
-                .addGap(21, 21, 21))
+                .addGap(9, 9, 9))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -374,45 +427,30 @@ public class Jframe extends java.awt.Dialog {
                     .addComponent(jLabel4)
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton2)
-                    .addComponent(jButton4))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton4)
+                    .addComponent(jButton2))
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jPanel1.add(jPanel4);
+        jPanel4.setBounds(10, 150, 600, 91);
+
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/modelo/vista/img/anime-speed-line-background-cartoon-comic-or-manga-effect-style-backdrop-template-graphic-design-element-for-social-media-banner-or-advertising-free-abstract-wallpaper-illustration-free-vector.jpg"))); // NOI18N
+        jPanel1.add(jLabel6);
+        jLabel6.setBounds(0, 10, 620, 540);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 621, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -426,26 +464,25 @@ public class Jframe extends java.awt.Dialog {
         dispose();
     }//GEN-LAST:event_closeDialog
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        seleccionar();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         guardar();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        buscarElementoLineal();
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-        seleccionar();
-
-    }//GEN-LAST:event_jButton3ActionPerformed
-
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         buscarElementoBinario();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        buscarElementoLineal();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -476,6 +513,8 @@ public class Jframe extends java.awt.Dialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -486,5 +525,6 @@ public class Jframe extends java.awt.Dialog {
     private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtEstado;
     private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtTemp;
     // End of variables declaration//GEN-END:variables
 }

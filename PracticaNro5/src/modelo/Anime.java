@@ -14,6 +14,7 @@ public class Anime {
     private String nombre;
     private String estado;
     private Integer generoA;
+    private String NumTemp;
 
     public Integer getId() {
         return id;
@@ -46,8 +47,12 @@ public class Anime {
     public void setGeneroA(Integer generoA) {
         this.generoA = generoA;
     }
-    
-    
-    
-    
+
+    public String getNumTemp() {
+        return NumTemp;
+    }
+
+    public void setNumTemp(String NumTemp) {
+        this.NumTemp = NumTemp;
+    } 
 }
