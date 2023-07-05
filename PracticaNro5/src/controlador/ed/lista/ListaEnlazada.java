@@ -6,7 +6,8 @@ package controlador.ed.lista;
 
 import controlador.ed.lista.exception.PosicionException;
 import controlador.ed.lista.exception.VacioException;
-
+import java.util.Arrays;
+import modelo.Anime;
 
 /**
  *
@@ -183,7 +184,7 @@ public class ListaEnlazada<E> {
     public Integer size() {
         return size;
     }
-    
+
     public void update(Integer pos, E dato) throws VacioException, PosicionException {
         if (isEmpty()) {
             throw new VacioException();
@@ -203,7 +204,44 @@ public class ListaEnlazada<E> {
                 throw new PosicionException();
             }
         }
-
     }
 
+    public void mergesort(Anime[] array, int inicio, int fin) {
+    if (inicio < fin) {
+        int mid = inicio + (fin - inicio) / 2;
+        mergesort(array, inicio, mid);
+        mergesort(array, mid + 1, fin);
+        merge(array, inicio, mid, fin);
+    }
+}
+
+    public void merge(Anime[] array, int inicio, int fin, int high) {
+        int n1 = fin - inicio + 1;
+        int n2 = high - fin;
+
+        Anime[] left = Arrays.copyOfRange(array, inicio, fin + 1);
+        Anime[] right = Arrays.copyOfRange(array, fin + 1, high + 1);
+
+        int i = 0, j = 0, k = inicio;
+        while (i < n1 && j < n2) {
+            if (left[i].getNombre().compareToIgnoreCase(right[j].getNombre()) <= 0) {
+                array[k] = left[i];
+                i++;
+            } else {
+                array[k] = right[j];
+                j++;
+            }
+            k++;
+        }
+        while (i < n1) {
+            array[k] = left[i];
+            i++;
+            k++;
+        }
+        while (j < n2) {
+            array[k] = right[j];
+            j++;
+            k++;
+        }
+    }
 }

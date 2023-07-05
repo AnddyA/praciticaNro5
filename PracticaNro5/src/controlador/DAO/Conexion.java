@@ -16,6 +16,7 @@ import com.thoughtworks.xstream.security.AnyTypePermission;
 public class Conexion {
     private XStream xstream;
     public static String URL = "data/";
+    
     private void conectar(){
         xstream = new XStream(new JettisonMappedXmlDriver());
         //xstream = new XStream(new JsonHierarchicalStreamDriver());

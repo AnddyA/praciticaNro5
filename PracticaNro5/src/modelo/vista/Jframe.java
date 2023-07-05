@@ -135,7 +135,7 @@ public class Jframe extends java.awt.Dialog {
         String texto = txtBuscar.getText();
         try {
             if (por.equalsIgnoreCase("Nombre")) {
-                Anime anime = ad.buscarPorNombreBinaria(texto, "Nombre");
+                Anime anime = ad.busquedaBinaria(texto, "Nombre");
                 if (anime != null) {
                     ListaEnlazada<Anime> listaAnime = new ListaEnlazada<>();
                     listaAnime.insertar(anime);
@@ -145,7 +145,7 @@ public class Jframe extends java.awt.Dialog {
                 }
             }
             if (por.equalsIgnoreCase("Genero")) {
-                Anime anime = ad.buscarPorNombreBinaria(texto, "Genero");
+                Anime anime = ad.busquedaBinaria(texto, "Genero");
                 if (anime != null) {
                     ListaEnlazada<Anime> listaAnime = new ListaEnlazada<>();
                     listaAnime.insertar(anime);
@@ -155,7 +155,7 @@ public class Jframe extends java.awt.Dialog {
                 }
             }
             if (por.equalsIgnoreCase("Temporada")) {
-                Anime anime = ad.buscarPorNombreBinaria(texto, "Temporada");
+                Anime anime = ad.busquedaBinaria(texto, "Temporada");
                 if (anime != null) {
                     ListaEnlazada<Anime> listaAnime = new ListaEnlazada<>();
                     listaAnime.insertar(anime);
@@ -165,7 +165,7 @@ public class Jframe extends java.awt.Dialog {
                 }
             }
             if (por.equalsIgnoreCase("Estado")) {
-                Anime anime = ad.buscarPorNombreBinaria(texto, "Estado");
+                Anime anime = ad.busquedaBinaria(texto, "Estado");
                 if (anime != null) {
                     ListaEnlazada<Anime> listaAnime = new ListaEnlazada<>();
                     listaAnime.insertar(anime);
@@ -212,7 +212,6 @@ public class Jframe extends java.awt.Dialog {
         jLabel4 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
         txtBuscar = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -375,6 +374,11 @@ public class Jframe extends java.awt.Dialog {
         comboBuscar.setBackground(new java.awt.Color(255, 255, 255));
         comboBuscar.setForeground(new java.awt.Color(102, 102, 102));
         comboBuscar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nombre", "Temporada", "Genero", "Estado" }));
+        comboBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBuscarActionPerformed(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(255, 255, 255));
         jButton2.setForeground(new java.awt.Color(102, 102, 102));
@@ -436,10 +440,6 @@ public class Jframe extends java.awt.Dialog {
         jPanel1.add(jPanel4);
         jPanel4.setBounds(10, 150, 600, 91);
 
-        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/modelo/vista/img/anime-speed-line-background-cartoon-comic-or-manga-effect-style-backdrop-template-graphic-design-element-for-social-media-banner-or-advertising-free-abstract-wallpaper-illustration-free-vector.jpg"))); // NOI18N
-        jPanel1.add(jLabel6);
-        jLabel6.setBounds(0, 10, 620, 540);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -484,6 +484,10 @@ public class Jframe extends java.awt.Dialog {
         buscarElementoLineal();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void comboBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBuscarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboBuscarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -514,7 +518,6 @@ public class Jframe extends java.awt.Dialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

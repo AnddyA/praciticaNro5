@@ -113,6 +113,20 @@ public class AnimeDao extends AdaptadorDAO<Anime> {
         }
         return resultado;
     }
+    
+    public ListaEnlazada<Anime> mergeSort(ListaEnlazada<Anime> lista) {
+    Anime[] arreglo = lista.toArray();
+    lista.mergesort(arreglo, 0, arreglo.length - 1);
+    lista = lista.toList(arreglo);
+    
+    try {
+        lista.imprimir();
+    } catch (VacioException ex) {
+        // Manejar la excepción de lista vacía si es necesario
+    }
+    
+    return lista;
+}
 
     //BUsqueda LIneal
     public ListaEnlazada<Anime> busquedaLineal(String dato, String tipo) throws Exception {
@@ -177,10 +191,10 @@ public class AnimeDao extends AdaptadorDAO<Anime> {
 //        System.out.println("salio");
 //        return null; // No se encontró ningún elemento que cumpla el criterio
 //    }
-    public Anime buscarPorNombreBinaria(String dato, String tipo) throws VacioException, PosicionException {
+    public Anime busquedaBinaria(String dato, String tipo) throws VacioException, PosicionException {
         Genero g = new GeneroDAO().buscarPorNombre(dato);
         ListaEnlazada<Anime> lista = listar();
-        ListaEnlazada<Anime> listaO = ordenarNombre(lista);
+        ListaEnlazada<Anime> listaO = mergeSort(lista);
         Anime[] matriz = listaO.toArray();
         int inicio = 0;
         int fin = listaO.size() - 1;
